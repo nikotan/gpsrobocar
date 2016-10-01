@@ -126,4 +126,5 @@ public:
 };
 
 
-#endif NSDEGREE_H
+#endif
+

@@ -28,4 +28,5 @@ public:
 
 extern NsCompassClass NsCompass;
 
-#endif NSCOMPASS_H
+#endif
+

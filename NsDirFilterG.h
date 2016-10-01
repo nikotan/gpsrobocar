@@ -32,4 +32,5 @@ public:
 
 extern NsDirFilterGClass NsDirFilterG;
 
-#endif NSDIRFG_H
+#endif
+

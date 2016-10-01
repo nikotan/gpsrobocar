@@ -38,4 +38,5 @@ public:
 
 extern NsGyroClass NsGyro;
 
-#endif NSGYRO_H
+#endif
+
