@@ -1,127 +1,132 @@
-
 #ifndef NSDEGREE_H
 #define NSDEGREE_H
 
-#include "Arduino.h"
+#ifdef ARDUINO
+  #include "Arduino.h"
+#endif
 
 
 class NsDegree
 {
-private:
-  int   degI_;
-  float degF_;
+  private:
+    int   degI_;
+    float degF_;
+    int   i_;
+    float f_;
 
-public:
+  public:
 
-  NsDegree()
-  {
-    degI_ = 0;
-    degF_ = 0.0f;
-  }
-
-  void set(int degI, float degF)
-  {
-    degI_ = degI;
-    degF_ = degF;
-  }
-
-  void set(const NsDegree &obj)
-  {
-    degI_ = obj.getDegI();
-    degF_ = obj.getDegF();
-  }
-
-  // str::ddd.ddddd
-  bool parseD(String str)
-  {
-    int idx = str.indexOf('.');
-    if(idx <= 0){
-      return false;
-    } else {
-      degI_ = str.substring(0, idx).toInt();
-      str = "0." + str.substring(idx + 1);
-      degF_ = atof(str.c_str());
-      return true;
+    NsDegree()
+    {
+      degI_ = 0;
+      degF_ = 0.0f;
     }
-  }
-  
-  // str::dddmm.mmm
-  bool parseDM(String str)
-  {
-    int idx = str.indexOf('.');
-    if(idx <= 3){
-      return false;
-    } else {
-      degI_ = str.substring(0, idx - 2).toInt();
-      degF_ = atof(str.substring(idx - 2).c_str()) / 60.0f;
-      return true;
+
+    void set(int degI, float degF)
+    {
+      degI_ = degI;
+      degF_ = degF;
     }
-  }
 
-  int getDegI()
-  {
-    return degI_;
-  }
-  
-  float getDegF()
-  {
-    return degF_;
-  }
-
-  float getDeg()
-  {
-    return (float)degI_ + degF_;
-  }
-
-  void add(const NsDegree &obj)
-  {
-    degI_ += obj.getDegI();
-    degF_ += obj.getDegF();
-    if(degF_ >= 1.0f){
-      degF_ -= 1.0f;
-      degI_ += 1;
-    } else if(degF_ < 0.0f){
-      degF_ += 1.0f;
-      degI_ -= 1;
+    void set(const NsDegree &obj)
+    {
+      degI_ = obj.getDegI();
+      degF_ = obj.getDegF();
     }
-  }
-  
-  void sub(const NsDegree &obj)
-  {
-    degI_ -= obj.getDegI();
-    degF_ -= obj.getDegF();
-    if(degF_ >= 1.0f){
-      degF_ -= 1.0f;
-      degI_ += 1;
-    } else if(degF_ < 0.0f){
-      degF_ += 1.0f;
-      degI_ -= 1;
+
+    // str::ddd.ddddd
+    bool parseD(const String &str)
+    {
+      i_ = str.indexOf('.');
+      if (i_ <= 0) {
+        return false;
+      } else {
+        degI_ = str.substring(0, i_).toInt();
+        degF_ = atof(("0." + str.substring(i_ + 1)).c_str());
+        return true;
+      }
     }
-  }
 
-  void multiply(float a)
-  {
-    float d = degI_ * a;
-    degI_ = (int)floor(d);
-    degF_ = degF_ * abs(a) + (d - (float)degI_);
-    if(degF_ >= 1.0f){
-      degF_ -= 1.0f;
-      degI_ += 1;
-    } else if(degF_ < 0.0f){
-      degF_ += 1.0f;
-      degI_ -= 1;
+    // str::dddmm.mmm
+    bool parseDM(const String &str)
+    {
+      i_ = str.indexOf('.');
+      if (i_ <= 3) {
+        return false;
+      } else {
+        degI_ = str.substring(0, i_ - 2).toInt();
+        degF_ = atof(str.substring(i_ - 2).c_str()) / 60.0f;
+        return true;
+      }
     }
-  }
 
-  void formatD(char* buf)
-  {
-    sprintf(buf, "%d.%0ld", degI_, (long)round(degF_ * 1000000l));
-  }
+    int getDegI()
+    {
+      return degI_;
+    }
 
-  void formatDF(char* buf)
-  {
-    sprintf(buf, "%3d.%0ld", degI_, (long)round(degF_ * 1000000l));
-  }
+    float getDegF()
+    {
+      return degF_;
+    }
+
+    float getDeg()
+    {
+      return (float)degI_ + degF_;
+    }
+
+    void getDeg6(long *p)
+    {
+      *p = degI_ * 1000000l + (long)round(degF_ * 1000000l);
+    }
+
+    void add(int degI, float degF)
+    {
+      degI_ += degI;
+      degF_ += degF;
+      i_ = (int)floor(degF_);
+      degI_ += i_;
+      degF_ -= i_;
+    }
+
+    void add(const NsDegree &obj)
+    {
+      add(obj.getDegI(), obj.getDegF());
+    }
+
+    void sub(int degI, float degF)
+    {
+      degI_ -= degI;
+      degF_ -= degF;
+      i_ = (int)floor(degF_);
+      degI_ += i_;
+      degF_ -= i_;
+    }
+
+    void sub(const NsDegree &obj)
+    {
+      sub(obj.getDegI(), obj.getDegF());
+    }
+
+    void multiply(float a)
+    {
+      f_ = degI_ * a;
+      degI_ = (int)floor(f_);
+      degF_ = degF_ * a + f_ - (float)degI_;
+      i_ = (int)floor(degF_);
+      degI_ += i_;
+      degF_ -= i_;
+    }
+
+    void formatD(char* buf)
+    {
+      sprintf(buf, "%d.%0ld", degI_, (long)round(degF_ * 1000000l));
+    }
+
+    void formatDF(char* buf)
+    {
+      sprintf(buf, "%3d.%0ld", degI_, (long)round(degF_ * 1000000l));
+    }
 
 };
 

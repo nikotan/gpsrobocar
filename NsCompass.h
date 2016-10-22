@@ -8,20 +8,28 @@
 class NsCompassClass
 {
 private:
-  int pin0_;
-  int pin1_;
-  int pin2_;
+  byte pin0_;
+  byte pin1_;
+  byte pin2_;
   int intervalMsec_;
-  int dirId_;
+  byte dirId_;
   float dir_;
   unsigned long timePrev_;
-  
+
+  byte* dirIdHist_;
+  int   dirIdHistLen_;
+  byte  dirIdHistPos_;
+  byte  dirIdCnts_[8];
+  byte  dirIdCntsMax_;
+  byte  dirIdCntsMaxId_;
+
 public:
   NsCompassClass(void);
   
-  void init(int, int, int, int);
+  void init(byte, byte, byte, int, int);
   int update();
-  int getDirId();
+  byte getDirId();
+  byte getDirIdFiltered();
   float getDir();
   unsigned long getTime();
 };

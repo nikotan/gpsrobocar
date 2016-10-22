@@ -31,7 +31,7 @@ void NsDirFilterGClass::init(int numGrid, float errorDir, float sigmaDir, float 
 // 予測(ジャイロの観測量に従って確率分布を更新, 3*sigmaの範囲内のみで近似計算)
 void NsDirFilterGClass::predict(unsigned long timeNow, float dirAV)
 {
-  if(timePrev_ > 0){
+  if(timePrev_ > 0 && timeNow > timePrev_ ){
     // 状態遷移確率テーブルを設定(3*sigmaの範囲内のみ)
     float ddir  = (dirAV + dirAVPrev_) * (timeNow - timePrev_) / 1000.0f / 2.0f;
     float sigma = sigmaDirAV_ * (timeNow - timePrev_) / 1000.0f;

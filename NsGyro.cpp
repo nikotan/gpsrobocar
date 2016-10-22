@@ -34,7 +34,7 @@ void NsGyroClass::initOrigin(int count, int intervalMsec)
 int NsGyroClass::update()
 {
   unsigned long timeNow = millis();
-  if( timeNow > timePrev_ + intervalMsec_ ){
+  if( timeNow >= timePrev_ + intervalMsec_ ){
     int ad = analogRead(pin_);
     dirAV_ = (ad - yawAD0_) * NSGYRO_VREF / 1024 / NSGYRO_SENS / NSGYRO_OPAMP * NSGYRO_SIGN;
     int msec = 0;
@@ -52,6 +52,8 @@ int NsGyroClass::update()
     }
     timePrev_ = timeNow;
     return msec;
+  } else if(timeNow < timePrev_) {
+    timePrev_ = timeNow;
   }
   return 0;
 }

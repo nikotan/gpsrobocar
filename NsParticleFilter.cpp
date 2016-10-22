@@ -42,7 +42,7 @@ void NsParticleFilterClass::initParticle()
 
 void NsParticleFilterClass::predict(unsigned long timeNow, float dir)
 {
-  if(timePrev_ > 0){
+  if(timePrev_ > 0 && timeNow > timePrev_){
     float fx = sin(dir * M_PI / 180.0f) * (timeNow - timePrev_) / 1000.0f;
     float fy = cos(dir * M_PI / 180.0f) * (timeNow - timePrev_) / 1000.0f;
     float ve = 0.0f;
